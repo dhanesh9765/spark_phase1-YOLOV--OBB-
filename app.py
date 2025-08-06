@@ -6,10 +6,32 @@ from ultralytics import YOLO
 import numpy as np
 from collections import defaultdict
 import shapely.geometry
+# --- Streamlit Page Config ---
+st.set_page_config(page_title="Spark Detection", layout="centered")
+
+# ---------------- PIN LOGIN ---------------- #
+APP_PIN = "4561"  # Change this PIN as required
+
+if "authenticated" not in st.session_state:
+    st.session_state.authenticated = False
+
+if not st.session_state.authenticated:
+    st.title("🔒 Spark Detection Login")
+    pin_input = st.text_input("Enter PIN", type="password")
+    if st.button("Login"):
+        if pin_input == APP_PIN:
+            st.session_state.authenticated = True
+            st.success("Access Granted!")
+            st.rerun()
+        else:
+            st.error("Incorrect PIN. Please try again.")
+    st.stop()
+
+# Logout button (always visible when logged in)
+st.sidebar.button("🔓 Logout", on_click=lambda: st.session_state.update({"authenticated": False}))
 
 # --- App Configuration ---
-st.set_page_config(page_title="Spark Detection", layout="centered")
-st.title("⚡ Spark Detection (YOLOv8-OBB)")
+st.title("Spark Detection Phase 1")
 
 # --- Load YOLO model ---
 @st.cache_resource
@@ -72,8 +94,7 @@ if model:
             total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
 
             output_path = "spark_output.mp4"
-            out = cv2.VideoWriter(output_path, cv2.VideoWriter_fourcc(*'mp4v'),
-                                  original_fps, (width, height))
+            out = cv2.VideoWriter(output_path, cv2.VideoWriter_fourcc(*'mp4v'), original_fps, (width, height))
 
             class_counts = defaultdict(int)
             frame_num = 0
