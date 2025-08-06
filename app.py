@@ -36,8 +36,8 @@ st.title("Spark Detection Phase 1")
 # --- Load YOLO model ---
 @st.cache_resource
 def load_model():
-    model_path = "spark_phase1-YOLOV--OBB-/runs/obb/train/weights/best.pt"
-    fallback_path = "spark_phase1-YOLOV--OBB-/runs/obb/train/weights/last.pt"
+    model_path = "runs/obb/train/weights/best.pt"
+    fallback_path = "runs/obb/train/weights/last.pt"
     if os.path.exists(model_path):
         st.success("✅ Loaded: best.pt")
         return YOLO(model_path, task="obb")
